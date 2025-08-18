@@ -1,7 +1,6 @@
 #pragma once
-#include "jni.h"
-#include <Windows.h>
 #include <string>
+#include <windows.h>
 
 #ifndef MAIN_H
 #define MAIN_H
@@ -11,9 +10,9 @@ public:
     void createConsole();
     bool envshit();
     bool jvmtishit();
+    int HookJniFunctions();
     void exit(HMODULE hModule);
     void main(HMODULE hModule);
-    jobject loadJar(std::string path);
 };
 
 #endif //MAIN_H
