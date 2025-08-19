@@ -89,7 +89,7 @@ namespace Hooks {
     jobject JNICALL Hook_NewGlobalRef(JNIEnv* env, jobject lobj);
     // ========================================================================================================================== //
 
-    int Init(JNIEnv* jenv);
-    int HookJVMTI(jvmtiEnv* jvmti);
+    NTSTATUS Init(JNIEnv* jenv);
+    jvmtiError HookJVMTI(jvmtiEnv* jvmti);
 }
 #endif // HOOKS_H

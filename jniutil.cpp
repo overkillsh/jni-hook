@@ -1,32 +1,30 @@
 #include "jniutil.h"
 
-JNIUtil::JNIUtil(JNIEnv* env) : jenv(env) {
 
-}
+//JNIUtil::JNIUtil() {}
+JNIUtil::JNIUtil(JNIEnv* env) : jenv(env) {}
 
-jstring JNIUtil::stringToJstring(const char* str) {
+jstring JNIUtil::StringToJstring(const char* str) {
 	return jenv->NewStringUTF(str);
 }
 
-const char* JNIUtil::jstringToString(jstring jstr) {
+const char* JNIUtil::JstringToString(jstring jstr) {
 	const char* str = jenv->GetStringUTFChars(jstr, 0);
 	jenv->ReleaseStringUTFChars(jstr, str);
 	return str;
 }
 
-jclass JNIUtil::findClass(const char* className) {
+jclass JNIUtil::FindClass(const char* className) {
 	// TODO: implement searching classloader maybe aswell fr
 	return jenv->FindClass(className);
 }
 
-jobject JNIUtil::instantiate(const char* className, const char* constructorDesc, ...) {
-	jclass jclazz = findClass(className);
-	if (jclazz == nullptr)
-		return nullptr;
+jobject JNIUtil::Instantiate(const char* className, const char* constructorDesc, ...) {
+	jclass jclazz = FindClass(className);
+	if (jclazz == nullptr) return nullptr;
 
 	jmethodID constructor = jenv->GetMethodID(jclazz, "<init>", constructorDesc);
-	if (constructor == nullptr)
-		return nullptr;
+	if (constructor == nullptr) return nullptr;
 
 	va_list args;
 	va_start(args, constructorDesc);
@@ -37,3 +35,23 @@ jobject JNIUtil::instantiate(const char* className, const char* constructorDesc,
 
 	return jobj;
 }
+
+// stackoverflow
+std::string JNIUtil::GetJClassName(JNIEnv* env, jclass klass, bool fullpath)
+{
+	jclass clazz = env->FindClass("java/lang/Class");
+	jmethodID mid_getName = env->GetMethodID(clazz, "getName", "()Ljava/lang/String;");
+	jstring strObj = (jstring)env->CallObjectMethod(klass, mid_getName);
+	std::string res = JstringToString(strObj);
+	if (!fullpath)
+	{
+		std::size_t pos = res.find_last_of('.');
+		if (pos != std::string::npos)
+		{
+			res = res.substr(pos + 1);
+		}
+	}
+	return res;
+}
+
+//JNIUtil JNIUtil::instance;

@@ -1,11 +1,13 @@
 #pragma once
 #include <Windows.h>
+#include <ntstatus.h>
 #include <iostream>
 #include <detours.h>
 
-#include <jni.h>
-#include <jvmti.h>
+#include "jniutil.h"
 
+#ifndef UTILS_H
+#define UTILS_H
 
 extern char logFilePath[MAX_PATH];
 inline void Log(const char* format, ...) {
@@ -28,22 +30,6 @@ inline void Log(const char* format, ...) {
 }
 #define LOG(...) Log(__VA_ARGS__)
 
-// stackoverflow
-inline std::string getClassName(JNIEnv* env, jclass klass, bool fullpath = true)
-{
-    jclass clazz = env->FindClass("java/lang/Class");
-    jmethodID mid_getName = env->GetMethodID(clazz, "getName", "()Ljava/lang/String;");
-    jstring strObj = (jstring)env->CallObjectMethod(klass, mid_getName);
-    const char* localName = env->GetStringUTFChars(strObj, 0);
-    std::string res = localName;
-    env->ReleaseStringUTFChars(strObj, localName);
-    if (!fullpath)
-    {
-        std::size_t pos = res.find_last_of('.');
-        if (pos != std::string::npos)
-        {
-            res = res.substr(pos + 1);
-        }
-    }
-    return res;
-}
+// shitcode
+extern JNIUtil* JUtil;
+#endif

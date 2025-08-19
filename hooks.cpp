@@ -73,7 +73,7 @@ namespace Hooks {
         jthread thread,
         jclass klass) {
         //LOG("ClassLoad called: %s", thread);
-        std::string name = getClassName(jni_env, klass);
+        std::string name = JUtil->GetJClassName(jni_env, klass);
         LOG("ClassLoad called: %s", name);
     }
 
@@ -83,7 +83,7 @@ namespace Hooks {
         jthread thread,
         jclass klass) {
         /*LOG("ClassPrepare: %s", klass);*/
-        std::string name = getClassName(jni_env, klass);
+        std::string name = JUtil->GetJClassName(jni_env, klass);
         LOG("ClassPrepare called: %s", name);
     }
 
@@ -123,7 +123,7 @@ namespace Hooks {
 
 
     jint JNICALL Hook_RegisterNatives(JNIEnv* env, jclass clazz, const JNINativeMethod* methods, jint numMethods) {
-        std::string clazzName = getClassName(env, clazz);
+        std::string clazzName = JUtil->GetJClassName(env, clazz);
         LOG("RegisterNatives called: %s | %p (%s)", methods->name, reinterpret_cast<uintptr_t>(methods->fnPtr), clazzName);
         //DebugBreak(); // :3
         return orig_RegisterNatives(env, clazz, methods, numMethods);
@@ -157,7 +157,7 @@ namespace Hooks {
 
 
 
-    int Init(JNIEnv* jenv) {
+    NTSTATUS Init(JNIEnv* jenv) {
         DetourTransactionBegin();
         DetourUpdateThread(GetCurrentThread());
 
@@ -198,7 +198,7 @@ namespace Hooks {
         //return HookJVMTI();
     }
 
-    int HookJVMTI(jvmtiEnv* jvmti) {
+    jvmtiError HookJVMTI(jvmtiEnv* jvmti) {
         jvmtiEventCallbacks callbacks = { 0 };
         callbacks.ClassFileLoadHook = Hook_ClassFileLoad;
         //callbacks.ClassLoad = Hook_ClassLoad;
@@ -206,9 +206,11 @@ namespace Hooks {
         //callbacks.FieldModification = Hook_FieldModification;
         //callbacks.MethodEntry = Hook_MethodEntry;
 
-        if (jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks)) != JVMTI_ERROR_NONE) {
+        jvmtiError status = jvmti->SetEventCallbacks(&callbacks, sizeof(callbacks));
+        if (status != JVMTI_ERROR_NONE) {
             LOG("failed to set jvmti callbacks");
-            return false;
         }
+
+        return status;
     }
 }

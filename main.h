@@ -10,7 +10,7 @@ public:
     void createConsole();
     bool envshit();
     bool jvmtishit();
-    int HookJniFunctions();
+    NTSTATUS HookJniFunctions();
     void exit(HMODULE hModule);
     void main(HMODULE hModule);
 };

@@ -9,8 +9,7 @@ void load(HMODULE hModule) {
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved) {
     // no attach, no run :fire:
-    if (reason != DLL_PROCESS_ATTACH)
-        return TRUE;
+    if (reason != DLL_PROCESS_ATTACH) return TRUE;
 
     std::thread{ load, hModule }.detach();
     

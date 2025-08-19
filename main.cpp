@@ -13,6 +13,7 @@
 JavaVM* jvm;
 JNIEnv* jenv;
 jvmtiEnv* jvmti;
+JNIUtil* JUtil = nullptr;
 
 jclass nativeBridgeClass = nullptr;
 jmethodID nativeBridgeTransformClassMethod = nullptr;
@@ -37,11 +38,16 @@ bool Main::envshit() {
         return false;
     }
 
+
     LOG("found jvm and attached to the current threadfr");
+
+    JUtil = new JNIUtil(jenv);
+    LOG("initialised JNIUtil");
+
     return true;
 }
 
-int Main::HookJniFunctions() {
+NTSTATUS Main::HookJniFunctions() {
     return Hooks::Init(jenv);
 }
 
@@ -66,7 +72,7 @@ bool Main::jvmtishit() {
         return false;
     }
 
-    Hooks::HookJVMTI(jvmti);
+    if (!Hooks::HookJVMTI(jvmti)) return false;
 
     //jvmtiEvent events = JVMTI_EVENT_CLASS_FILE_LOAD_HOOK | JVMTI_EVENT_METHOD_ENTRY;
     //jvmtiEvent[] events = { JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, JVMTI_EVENT_METHOD_ENTRY };
@@ -134,9 +140,12 @@ void Main::main(HMODULE hModule) {
     }
 
 
-    HookJniFunctions();
-    LOG("all init");
+    if (!STATUS_SUCCESS(HookJniFunctions())) {
+        LOG("failed to hook jni func ptrs");
+        return;
+    }
 
+    LOG("all init success");
     while (!GetAsyncKeyState(VK_F7)) {
 
     }
