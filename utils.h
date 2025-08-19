@@ -1,10 +1,13 @@
 #pragma once
 #include <Windows.h>
 #include <ntstatus.h>
+//#include <ntdef.h>
 #include <iostream>
 #include <detours.h>
 
 #include "jniutil.h"
+
+#define _SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 
 #ifndef UTILS_H
 #define UTILS_H
@@ -30,6 +33,6 @@ inline void Log(const char* format, ...) {
 }
 #define LOG(...) Log(__VA_ARGS__)
 
-// shitcode
+// shitcode/forward declaration
 extern JNIUtil* JUtil;
 #endif

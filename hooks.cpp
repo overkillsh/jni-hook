@@ -1,6 +1,7 @@
 #pragma once
 #include "hooks.h"
 
+// should probably make this oop
 namespace Hooks {
     RegisterNatives_t orig_RegisterNatives = nullptr;
     DefineClass_t orig_DefineClass = nullptr;
@@ -194,7 +195,7 @@ namespace Hooks {
         //LOG("hooked SetLongField %p | orig %p", orig_SetLongField, SetLongFieldHook);
         LOG("hooked NewGlobalRef %p | orig %p", orig_NewGlobalRef, Hook_NewGlobalRef);
 
-        return 0;
+        return STATUS_SUCCESS;
         //return HookJVMTI();
     }
 

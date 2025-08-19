@@ -39,10 +39,14 @@ jobject JNIUtil::Instantiate(const char* className, const char* constructorDesc,
 // stackoverflow
 std::string JNIUtil::GetJClassName(JNIEnv* env, jclass klass, bool fullpath)
 {
+	//if (!jenv) return "erm";
 	jclass clazz = env->FindClass("java/lang/Class");
-	jmethodID mid_getName = env->GetMethodID(clazz, "getName", "()Ljava/lang/String;");
-	jstring strObj = (jstring)env->CallObjectMethod(klass, mid_getName);
-	std::string res = JstringToString(strObj);
+	jmethodID mID = env->GetMethodID(clazz, "getName", "()Ljava/lang/String;");
+	jstring strObj = (jstring)env->CallObjectMethod(klass, mID);
+	//std::string res = JstringToString(strObj);
+	const char* str = env->GetStringUTFChars(strObj, 0);
+	std::string res = str;
+	env->ReleaseStringUTFChars(strObj, str);
 	if (!fullpath)
 	{
 		std::size_t pos = res.find_last_of('.');

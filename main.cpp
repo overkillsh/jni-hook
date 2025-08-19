@@ -38,12 +38,16 @@ bool Main::envshit() {
         return false;
     }
 
-
     LOG("found jvm and attached to the current threadfr");
 
+    // fix this bruh
     JUtil = new JNIUtil(jenv);
-    LOG("initialised JNIUtil");
-
+    if (!JUtil) {
+        LOG("failed to init JNIUtil");
+        return false;
+    }
+    
+    LOG("initialised JNIUtil and env");
     return true;
 }
 
@@ -72,7 +76,7 @@ bool Main::jvmtishit() {
         return false;
     }
 
-    if (!Hooks::HookJVMTI(jvmti)) return false;
+    if (Hooks::HookJVMTI(jvmti) != JVMTI_ERROR_NONE) return false;
 
     //jvmtiEvent events = JVMTI_EVENT_CLASS_FILE_LOAD_HOOK | JVMTI_EVENT_METHOD_ENTRY;
     //jvmtiEvent[] events = { JVMTI_EVENT_CLASS_FILE_LOAD_HOOK, JVMTI_EVENT_METHOD_ENTRY };
@@ -140,7 +144,7 @@ void Main::main(HMODULE hModule) {
     }
 
 
-    if (!STATUS_SUCCESS(HookJniFunctions())) {
+    if (!_SUCCESS(HookJniFunctions())) {
         LOG("failed to hook jni func ptrs");
         return;
     }
