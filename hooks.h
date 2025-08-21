@@ -1,5 +1,8 @@
 #pragma once
 #include "utils.h"
+#include <intrin.h>
+
+#pragma intrinsic(_ReturnAddress)
 
 #ifndef HOOKS_H
 #define HOOKS_H
@@ -8,7 +11,7 @@ namespace Hooks {
     //class Hooks {
     //private:
     typedef jint(JNICALL* RegisterNatives_t)(JNIEnv*, jclass, const JNINativeMethod*, jint);
-    typedef jclass(JNICALL* DefineClass_t) (JNIEnv* env, const char* name, jobject loader, const jbyte* buf, jsize len);
+    typedef jclass(JNICALL* DefineClass_t) (JNIEnv* env, const char *name, jobject loader, const jbyte* buf, jsize len);
     typedef void (JNICALL* SetByteArrayRegion_t)(JNIEnv* env, jbyteArray array, jsize start, jsize len, const jbyte* buf);
     typedef void (JNICALL* SetObjectField_t)(JNIEnv*, jobject, jfieldID, jobject);
     typedef void (JNICALL* SetLongField_t)(JNIEnv*, jobject, jfieldID, jlong);
@@ -17,6 +20,7 @@ namespace Hooks {
     typedef jstring(JNICALL* NewStringUTF_t)(JNIEnv* env, const char* utf);
     typedef jstring(JNICALL* NewStringUTF_t)(JNIEnv* env, const char* utf);
     typedef jobject(JNICALL* NewGlobalRef_t)(JNIEnv* env, jobject lobj);
+    typedef jobject(JNICALL* CallObjectMethod_t)(JNIEnv* env, jobject obj, jmethodID methodID, ...);
 
     //public:
     extern RegisterNatives_t orig_RegisterNatives;
@@ -89,7 +93,7 @@ namespace Hooks {
     jobject JNICALL Hook_NewGlobalRef(JNIEnv* env, jobject lobj);
     // ========================================================================================================================== //
 
-    NTSTATUS Init(JNIEnv* jenv);
+    NTSTATUS Init(JNIEnv* jenv, jvmtiEnv* jvmti);
     jvmtiError HookJVMTI(jvmtiEnv* jvmti);
 }
 #endif // HOOKS_H

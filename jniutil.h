@@ -2,6 +2,7 @@
 #include <jni.h>
 #include <jvmti.h>
 #include <string>
+#include <windows.h>
 
 #ifndef JNIUTIL_H
 #define JNIUTIL_H
@@ -17,6 +18,8 @@ public:
     jobject Instantiate(const char* className, const char* constructorDesc, ...);
     // GetClassName winapi exists are we fr
     std::string GetJClassName(JNIEnv* env, jclass klass, bool fullpath = true);
+    std::string GetName(JNIEnv* env, jclass obj, bool fullpath = true);
+    std::string jcharToString(const jchar* unicode, jsize len);
 private:
     //static JNIUtil instance;
     JNIEnv* jenv;

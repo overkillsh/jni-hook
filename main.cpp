@@ -52,7 +52,7 @@ bool Main::envshit() {
 }
 
 NTSTATUS Main::HookJniFunctions() {
-    return Hooks::Init(jenv);
+    return Hooks::Init(jenv, jvmti);
 }
 
 bool Main::jvmtishit() {
@@ -126,11 +126,14 @@ void Main::exit(HMODULE hModule) {
 }
 
 char logFilePath[MAX_PATH];
+char tmpPath[MAX_PATH];
 void Main::main(HMODULE hModule) {
     DWORD tempPathLength = GetTempPathA(MAX_PATH, logFilePath);
     if (tempPathLength == 0 || tempPathLength > MAX_PATH) {
         return;
     }
+    GetTempPathA(MAX_PATH, tmpPath);
+
     strcat_s(logFilePath, MAX_PATH, "log.txt");
     FILE* logFile;
     fopen_s(&logFile, logFilePath, "w");
